@@ -367,6 +367,13 @@ h1, h2, h3, h4, h5, h6 {
     color: #cbd5e1;
 }
 
+/* Ensure helper/label texts on login/register pages are highly visible light gray */
+.auth-card .text-muted,
+.auth-card .form-check-label,
+.auth-card .form-text {
+    color: #cbd5e1 !important;
+}
+
 /* User Profile Image Header */
 .profile-img-container {
     position: relative;
