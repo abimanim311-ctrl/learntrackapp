@@ -23,11 +23,16 @@ class Config:
     db_url = os.environ.get('DATABASE_URL') or os.environ.get('MYSQL_URL') or os.environ.get('JAWSDB_URL') or os.environ.get('CLEARDB_DATABASE_URL')
     if db_url and db_url.startswith('mysql'):
         try:
-            from urllib.parse import urlparse
-            url = urlparse(db_url)
+            from urllib.parse import urlparse, unquote
+            # Clean mysql+pymysql prefix if present
+            clean_url = db_url
+            if clean_url.startswith('mysql+pymysql://'):
+                clean_url = clean_url.replace('mysql+pymysql://', 'mysql://')
+                
+            url = urlparse(clean_url)
             MYSQL_HOST = url.hostname or MYSQL_HOST
-            MYSQL_USER = url.username or MYSQL_USER
-            MYSQL_PASSWORD = url.password or MYSQL_PASSWORD
+            MYSQL_USER = unquote(url.username) if url.username else MYSQL_USER
+            MYSQL_PASSWORD = unquote(url.password) if url.password else MYSQL_PASSWORD
             MYSQL_DB = url.path.lstrip('/') or MYSQL_DB
             if url.port:
                 MYSQL_PORT = int(url.port)
