@@ -1,0 +1,86 @@
+<!-- Navbar Component -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-custom">
+    <div class="container-fluid">
+        <!-- Sidebar Toggle -->
+        <button type="button" id="sidebarCollapse" class="btn btn-outline-secondary border-0 rounded-circle me-3">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+
+        <!-- Mobile Brand (only visible on small screens) -->
+        <a href="{{ url_for('dashboard') }}" class="navbar-brand-mobile me-auto">
+            <i class="bi bi-journal-bookmark-fill me-1"></i> LearnTrack
+        </a>
+
+        <!-- Right Side Nav Elements -->
+        <div class="d-flex align-items-center ms-auto">
+            
+            <!-- Notifications Dropdown -->
+            <div class="dropdown me-4">
+                <a class="text-reset me-3 dropdown-toggle hidden-arrow position-relative" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-bell-fill fs-5 text-secondary"></i>
+                    {% if unread_count and unread_count > 0 %}
+                        <span class="notification-badge-count">{{ unread_count }}</span>
+                    {% endif %}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 py-2 mt-2" aria-labelledby="navbarDropdownMenuLink" style="width: 300px; max-height: 400px; overflow-y: auto;">
+                    <li class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold">Notifications</h6>
+                        {% if unread_count and unread_count > 0 %}
+                            <a href="{{ url_for('mark_all_notifications_read') }}" class="text-primary text-decoration-none fs-8 fw-semibold" style="font-size: 0.8rem;">Mark all read</a>
+                        {% endif %}
+                    </li>
+                    {% if unread_notifications %}
+                        {% for notification in unread_notifications %}
+                            <li class="px-3 py-2 border-bottom">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <p class="mb-1 text-sm text-dark fs-8" style="font-size: 0.85rem; line-height: 1.3;">{{ notification.message }}</p>
+                                </div>
+                                <span class="text-muted font-monospace" style="font-size: 0.7rem;">{{ notification.created_at.strftime('%m/%d %H:%M') if notification.created_at is not string else notification.created_at }}</span>
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="px-3 py-4 text-center text-muted">
+                            <i class="bi bi-bell-slash fs-2 mb-2 d-block"></i>
+                            <span class="fs-8">No new notifications</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- User Menu Dropdown -->
+            <div class="dropdown">
+                <a class="dropdown-toggle d-flex align-items-center text-decoration-none" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="{{ url_for('static', filename='uploads/' ~ current_user.profile_image) }}" class="rounded-circle border border-2 border-primary" height="36" width="36" alt="Avatar" style="object-fit: cover;">
+                    <span class="ms-2 d-none d-md-inline text-dark fw-medium">{{ current_user.username }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 py-2 mt-2" aria-labelledby="navbarDropdownUser">
+                    <li>
+                        <div class="px-3 py-2 border-bottom">
+                            <span class="d-block text-dark fw-bold">{{ current_user.username }}</span>
+                            <span class="d-block text-muted text-sm" style="font-size: 0.8rem;">{{ current_user.email }}</span>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-2" href="{{ url_for('profile') }}">
+                            <i class="bi bi-person-gear me-2"></i> Settings
+                        </a>
+                    </li>
+                    {% if current_user.is_admin %}
+                    <li>
+                        <a class="dropdown-item py-2 text-primary" href="{{ url_for('admin_dashboard') }}">
+                            <i class="bi bi-shield-lock me-2"></i> Admin Panel
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item py-2 text-danger" href="{{ url_for('logout') }}">
+                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</nav>

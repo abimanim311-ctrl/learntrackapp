@@ -1,0 +1,190 @@
+{% extends 'layout.html' %}
+
+{% block title %}Profile Settings - LearnTrack{% endblock %}
+
+{% block content %}
+<div class="row mt-2">
+    <!-- Left Column: User Summary Card -->
+    <div class="col-lg-4 mb-4">
+        <div class="card-glass p-4 text-center">
+            <div class="profile-img-container">
+                <img src="{{ url_for('static', filename='uploads/' ~ current_user.profile_image) }}" class="profile-img-circle border border-3 border-primary" alt="Profile Avatar">
+            </div>
+            
+            <h4 class="fw-bold mb-1">{{ current_user.username }}</h4>
+            <p class="text-muted text-sm mb-3 font-monospace" style="font-size: 0.85rem;">{{ current_user.email }}</p>
+            
+            <div class="border-top pt-3 mt-3 text-start">
+                <h6 class="fw-bold text-uppercase text-muted mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">Learning Profile</h6>
+                <div class="mb-3">
+                    <span class="text-muted small d-block">Style:</span>
+                    <span class="badge bg-primary px-3 py-2 mt-1 rounded-pill">{{ current_user.learning_style }}</span>
+                </div>
+                <div>
+                    <span class="text-muted small d-block mb-1">Interests:</span>
+                    {% if current_user.interests %}
+                        {% for interest in current_user.interests.split(',') %}
+                            {% if interest.strip() %}
+                                <span class="badge bg-secondary-subtle text-dark me-1 mb-1">{{ interest.strip() }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-muted small italic">No interests specified yet.</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Settings Forms -->
+    <div class="col-lg-8">
+        <!-- 1. Profile Settings Form -->
+        <div class="card-glass p-4 mb-4">
+            <h5 class="fw-bold mb-3 d-flex align-items-center">
+                <i class="bi bi-person-bounding-box text-primary me-2"></i>
+                Update Personal Details
+            </h5>
+            
+            <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.username.label(class="form-label fw-semibold") }}
+                        {% if form.username.errors %}
+                            {{ form.username(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.username(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.email.label(class="form-label fw-semibold") }}
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.learning_style.label(class="form-label fw-semibold") }}
+                        {% if form.learning_style.errors %}
+                            {{ form.learning_style(class="form-select is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.learning_style.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.learning_style(class="form-select") }}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.profile_image.label(class="form-label fw-semibold") }}
+                        {% if form.profile_image.errors %}
+                            {{ form.profile_image(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.profile_image.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.profile_image(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    {{ form.interests.label(class="form-label fw-semibold") }}
+                    {% if form.interests.errors %}
+                        {{ form.interests(class="form-control is-invalid", rows="2") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.interests.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.interests(class="form-control", rows="2") }}
+                    {% endif %}
+                    <small class="form-text text-muted" style="font-size: 0.75rem;">Comma-separated interests (e.g. Python, Machine Learning, Design)</small>
+                </div>
+
+                <div class="mt-2">
+                    {{ form.submit(class="btn btn-primary-custom") }}
+                </div>
+            </form>
+        </div>
+
+        <!-- 2. Change Password Form -->
+        <div class="card-glass p-4">
+            <h5 class="fw-bold mb-3 d-flex align-items-center">
+                <i class="bi bi-key-fill text-warning me-2"></i>
+                Change Password
+            </h5>
+            
+            <form method="POST" action="{{ url_for('change_password') }}">
+                {{ password_form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    {{ password_form.current_password.label(class="form-label fw-semibold") }}
+                    {% if password_form.current_password.errors %}
+                        {{ password_form.current_password(class="form-control is-invalid", placeholder="Current Password") }}
+                        <div class="invalid-feedback">
+                            {% for error in password_form.current_password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ password_form.current_password(class="form-control", placeholder="Current Password") }}
+                    {% endif %}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ password_form.new_password.label(class="form-label fw-semibold") }}
+                        {% if password_form.new_password.errors %}
+                            {{ password_form.new_password(class="form-control is-invalid", placeholder="New Password") }}
+                            <div class="invalid-feedback">
+                                {% for error in password_form.new_password.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ password_form.new_password(class="form-control", placeholder="New Password") }}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ password_form.confirm_password.label(class="form-label fw-semibold") }}
+                        {% if password_form.confirm_password.errors %}
+                            {{ password_form.confirm_password(class="form-control is-invalid", placeholder="Confirm New Password") }}
+                            <div class="invalid-feedback">
+                                {% for error in password_form.confirm_password.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ password_form.confirm_password(class="form-control", placeholder="Confirm New Password") }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    {{ password_form.submit(class="btn btn-warning text-white fw-medium px-4 py-2 rounded-3 shadow-sm") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

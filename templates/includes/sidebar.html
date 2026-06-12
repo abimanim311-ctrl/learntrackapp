@@ -1,0 +1,56 @@
+<!-- Sidebar Component -->
+<nav id="sidebar">
+    <div class="sidebar-header d-flex align-items-center justify-content-between">
+        <a href="{{ url_for('dashboard') }}" class="text-white text-decoration-none d-flex align-items-center">
+            <i class="bi bi-journal-bookmark-fill fs-3 me-2"></i>
+            <span class="fs-4">LearnTrack</span>
+        </a>
+    </div>
+
+    <ul class="list-unstyled components">
+        <li>
+            <a href="{{ url_for('dashboard') }}">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('goals_list') }}">
+                <i class="bi bi-target"></i>
+                <span>Learning Goals</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('add_goal') }}">
+                <i class="bi bi-plus-circle"></i>
+                <span>Create Goal</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url_for('profile') }}">
+                <i class="bi bi-person-gear"></i>
+                <span>Profile Settings</span>
+            </a>
+        </li>
+        
+        <!-- Admin Panel (Only shown to Admin users) -->
+        {% if current_user.is_admin %}
+        <li class="border-top my-2 border-secondary opacity-50"></li>
+        <li class="sidebar-label px-4 text-uppercase fs-7 text-muted font-monospace py-1" style="font-size: 0.75rem;">Administrator</li>
+        <li>
+            <a href="{{ url_for('admin_dashboard') }}">
+                <i class="bi bi-shield-lock"></i>
+                <span>Admin Panel</span>
+            </a>
+        </li>
+        {% endif %}
+
+        <li class="border-top my-2 border-secondary opacity-50"></li>
+        <li>
+            <a href="{{ url_for('logout') }}" class="text-danger-hover">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+        </li>
+    </ul>
+</nav>

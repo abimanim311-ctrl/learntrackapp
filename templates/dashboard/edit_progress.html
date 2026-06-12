@@ -1,0 +1,84 @@
+{% extends 'layout.html' %}
+
+{% block title %}Edit Study Progress - LearnTrack{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mb-4 mt-2">
+    <div class="col-lg-6 col-md-8 col-12">
+        <div class="card-glass p-4 shadow-sm">
+            <div class="mb-4">
+                <a href="{{ url_for('dashboard') }}" class="text-decoration-none text-muted small">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                </a>
+                <h3 class="fw-bold mt-2 mb-1">Edit Study Progress</h3>
+                <p class="text-muted">Modify study metrics logged for goal: <span class="fw-bold text-primary">{{ goal_title }}</span></p>
+            </div>
+
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.study_date.label(class="form-label fw-semibold") }}
+                        {% if form.study_date.errors %}
+                            {{ form.study_date(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.study_date.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.study_date(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.hours.label(class="form-label fw-semibold") }}
+                        {% if form.hours.errors %}
+                            {{ form.hours(class="form-control is-invalid", placeholder="e.g. 2.5") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.hours.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.hours(class="form-control", placeholder="e.g. 2.5") }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    {{ form.topic.label(class="form-label fw-semibold") }}
+                    {% if form.topic.errors %}
+                        {{ form.topic(class="form-control is-invalid", placeholder="e.g. CSS Grid, OOP inheritance") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.topic.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.topic(class="form-control", placeholder="e.g. CSS Grid, OOP inheritance") }}
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.notes.label(class="form-label fw-semibold") }}
+                    {% if form.notes.errors %}
+                        {{ form.notes(class="form-control is-invalid", rows="4", placeholder="What key insights did you learn?") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.notes.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.notes(class="form-control", rows="4", placeholder="What key insights did you learn?") }}
+                    {% endif %}
+                </div>
+
+                <div class="d-grid mt-2">
+                    {{ form.submit(class="btn btn-primary-custom py-2.5") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

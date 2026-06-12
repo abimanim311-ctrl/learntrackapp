@@ -1,0 +1,228 @@
+{% extends 'layout.html' %}
+
+{% block title %}Admin Control Panel - LearnTrack{% endblock %}
+
+{% block content %}
+<div class="mb-4 mt-2">
+    <h2 class="fw-bold mb-1">Admin Control Panel</h2>
+    <p class="text-muted mb-0">Monitor platform metrics, manage registered accounts, and moderate study logs.</p>
+</div>
+
+<!-- 1. Admin System Stats -->
+<div class="row mb-4">
+    <!-- Total Users -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card-glass p-3 h-100 d-flex align-items-center">
+            <div class="metric-icon metric-purple me-3">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div>
+                <span class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Total Users</span>
+                <h3 class="fw-bold mb-0 mt-1">{{ stats.total_users }}</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Total Goals -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card-glass p-3 h-100 d-flex align-items-center">
+            <div class="metric-icon metric-blue me-3">
+                <i class="bi bi-bullseye"></i>
+            </div>
+            <div>
+                <span class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Global Goals</span>
+                <h3 class="fw-bold mb-0 mt-1">{{ stats.total_goals }}</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Total Study Logs -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card-glass p-3 h-100 d-flex align-items-center">
+            <div class="metric-icon metric-green me-3">
+                <i class="bi bi-journal-text"></i>
+            </div>
+            <div>
+                <span class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Progress Logs</span>
+                <h3 class="fw-bold mb-0 mt-1">{{ stats.total_logs }}</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Total Hours -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card-glass p-3 h-100 d-flex align-items-center">
+            <div class="metric-icon metric-amber me-3">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+            <div>
+                <span class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Global Hours</span>
+                <h3 class="fw-bold mb-0 mt-1">{{ stats.total_hours or 0.0 }} h</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Admin Tables: Users & Goals -->
+<div class="row">
+    <!-- Users Management Table -->
+    <div class="col-xl-6 col-12 mb-4">
+        <div class="card-glass p-4 h-100">
+            <h5 class="fw-bold mb-3 d-flex align-items-center text-primary">
+                <i class="bi bi-people-fill me-2"></i> Users Management
+            </h5>
+            
+            {% if users %}
+                <div class="table-responsive table-responsive-custom">
+                    <table class="table table-hover table-custom align-middle bg-white" style="font-size: 0.9rem;">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Style</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ url_for('static', filename='uploads/' ~ user.profile_image) }}" class="rounded-circle me-2" width="30" height="30" style="object-fit: cover;">
+                                            <span class="fw-bold {% if user.is_admin %}text-primary{% else %}text-dark{% endif %}">
+                                                {{ user.username }} {% if user.is_admin %}<i class="bi bi-shield-fill-check small" title="Admin"></i>{% endif %}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td><span class="text-muted font-monospace">{{ user.email }}</span></td>
+                                    <td><span class="badge bg-secondary-subtle text-dark">{{ user.learning_style }}</span></td>
+                                    <td class="text-end">
+                                        {% if user.id != current_user.id %}
+                                            <form action="{{ url_for('admin_delete_user', user_id=user.id) }}" method="POST" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <button type="submit" class="btn btn-outline-danger btn-sm border-0 confirm-delete" data-item-name="user account '{{ user.username }}'">
+                                                    <i class="bi bi-person-x-fill"></i>
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="text-muted small">You</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted text-center py-4">No users found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Goals Management Table -->
+    <div class="col-xl-6 col-12 mb-4">
+        <div class="card-glass p-4 h-100">
+            <h5 class="fw-bold mb-3 d-flex align-items-center text-primary">
+                <i class="bi bi-target me-2"></i> Active Goals Moderation
+            </h5>
+            
+            {% if goals %}
+                <div class="table-responsive table-responsive-custom">
+                    <table class="table table-hover table-custom align-middle bg-white" style="font-size: 0.9rem;">
+                        <thead>
+                            <tr>
+                                <th>Creator</th>
+                                <th>Goal Title</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for goal in goals %}
+                                <tr>
+                                    <td>
+                                        <span class="fw-semibold text-muted">{{ goal.username }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark text-truncate" style="max-width: 150px;" title="{{ goal.title }}">{{ goal.title }}</div>
+                                        <span class="text-muted small" style="font-size: 0.75rem;">{{ goal.category }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if goal.status == 'Completed' %}bg-success-subtle text-success{% elif goal.status == 'In Progress' %}bg-primary-subtle text-primary{% else %}bg-warning-subtle text-warning{% endif %}">
+                                            {{ goal.status }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <form action="{{ url_for('admin_delete_goal', goal_id=goal.id) }}" method="POST" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                            <button type="submit" class="btn btn-outline-danger btn-sm border-0 confirm-delete" data-item-name="goal '{{ goal.title }}'">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted text-center py-4">No goals recorded on the platform.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- 3. Progress Logs Feed -->
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card-glass p-4">
+            <h5 class="fw-bold mb-3 d-flex align-items-center text-primary">
+                <i class="bi bi-activity me-2"></i> System Progress Logs Feed
+            </h5>
+            
+            {% if logs %}
+                <div class="table-responsive table-responsive-custom">
+                    <table class="table table-hover table-custom align-middle bg-white" style="font-size: 0.9rem;">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Date</th>
+                                <th>Goal / Category</th>
+                                <th>Duration</th>
+                                <th>Topic</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                                <tr>
+                                    <td>
+                                        <span class="fw-bold text-dark">{{ log.username }}</span>
+                                    </td>
+                                    <td class="font-monospace text-muted" style="font-size: 0.85rem;">
+                                        {{ log.study_date.strftime('%Y-%m-%d') if log.study_date is not string else log.study_date }}
+                                    </td>
+                                    <td>
+                                        <span class="fw-semibold">{{ log.goal_title }}</span>
+                                        <span class="badge bg-secondary-subtle text-dark ms-2">{{ log.goal_category }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary-subtle text-primary">{{ log.hours }} hrs</span>
+                                    </td>
+                                    <td>
+                                        <code class="text-dark bg-light px-2 py-1 rounded" style="font-size: 0.8rem;">{{ log.topic }}</code>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted small text-truncate d-inline-block" style="max-width: 200px;" title="{{ log.notes }}">
+                                            {{ log.notes or '-' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted text-center py-4">No study hours have been logged yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

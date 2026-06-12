@@ -1,0 +1,344 @@
+{% extends 'layout.html' %}
+
+{% block title %}Dashboard - LearnTrack{% endblock %}
+
+{% block content %}
+<!-- Welcome & Streak Header -->
+<div class="row align-items-center mb-4 mt-2">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-1">Hello, {{ current_user.username }}! 👋</h2>
+        <p class="text-muted mb-0">Welcome back. Keep tracking your progress to maintain your learning streak.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <div class="streak-container align-middle shadow-sm">
+            <i class="bi bi-fire streak-flame"></i>
+            <span>Current Streak: {{ stats.current_streak }} Days</span>
+        </div>
+        <span class="badge bg-secondary ms-2 py-2 px-3 rounded-pill">Longest: {{ stats.longest_streak }} days</span>
+    </div>
+</div>
+
+<!-- 1. Stats Counter Cards -->
+<div class="row mb-4">
+    <!-- Total Goals Card -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card-glass p-3 h-100 d-flex align-items-center">
+            <div class="metric-icon metric-blue me-3">
+                <i class="bi bi-bullseye"></i>
+            </div>
+            <div>
+                <h6 class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Total Goals</h6>
+                <h3 class="fw-bold mb-0 mt-1">{{ stats.total_goals }}</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Completed Goals Card -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card-glass p-3 h-100 d-flex align-items-center">
+            <div class="metric-icon metric-green me-3">
+                <i class="bi bi-patch-check"></i>
+            </div>
+            <div>
+                <h6 class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Completed Goals</h6>
+                <h3 class="fw-bold mb-0 mt-1">{{ stats.completed_goals }}</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Pending Goals Card -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card-glass p-3 h-100 d-flex align-items-center">
+            <div class="metric-icon metric-amber me-3">
+                <i class="bi bi-hourglass-split"></i>
+            </div>
+            <div>
+                <h6 class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Pending Goals</h6>
+                <h3 class="fw-bold mb-0 mt-1">{{ stats.pending_goals }}</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Total Hours Card -->
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card-glass p-3 h-100 d-flex align-items-center">
+            <div class="metric-icon metric-purple me-3">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div>
+                <h6 class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Study Hours</h6>
+                <h3 class="fw-bold mb-0 mt-1">{{ stats.total_hours or 0.00 }} h</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Mid Section: Quick Log, Deadlines, Recommendations, Badges -->
+<div class="row">
+    <!-- Left Column: Quick Log & Deadlines -->
+    <div class="col-xl-6 col-lg-12 mb-4">
+        
+        <!-- Quick Log Study Hours Widget -->
+        <div class="card-glass p-4 mb-4">
+            <h5 class="fw-bold mb-3 d-flex align-items-center">
+                <i class="bi bi-plus-square-fill text-primary me-2"></i>
+                Log Today's Study Progress
+            </h5>
+            {% if active_goals %}
+                <form action="{{ url_for('log_progress') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="goal_id" class="form-label text-sm fw-medium">Select Learning Goal</label>
+                            <select class="form-select" id="goal_id" name="goal_id" required>
+                                {% for goal in active_goals %}
+                                    <option value="{{ goal.id }}">{{ goal.title }} ({{ goal.category }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="study_date" class="form-label text-sm fw-medium">Study Date</label>
+                            <input type="date" class="form-control" id="study_date" name="study_date" value="{{ today_date }}" max="{{ today_date }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="hours" class="form-label text-sm fw-medium">Hours Studied</label>
+                            <input type="number" step="0.25" min="0.25" max="24" class="form-control" id="hours" name="hours" placeholder="e.g. 1.5" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="topic" class="form-label text-sm fw-medium">Topic Covered</label>
+                            <input type="text" class="form-control" id="topic" name="topic" placeholder="e.g. OOP, REST APIs, CSS Grid" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notes" class="form-label text-sm fw-medium">Study Notes / Insights</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="2" placeholder="Describe key takeaways..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary-custom w-100">
+                        <i class="bi bi-check-circle me-1"></i> Save Progress Log
+                    </button>
+                </form>
+            {% else %}
+                <div class="text-center py-4 bg-light rounded-4 border border-dashed">
+                    <i class="bi bi-journal-x fs-1 text-muted mb-2 d-block"></i>
+                    <p class="mb-2 text-muted fw-semibold">No active goals found.</p>
+                    <p class="text-muted small mb-3">Create a learning goal first to begin logging study hours.</p>
+                    <a href="{{ url_for('add_goal') }}" class="btn btn-primary-custom btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Add Goal Now
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Deadline & Study Reminders -->
+        <div class="card-glass p-4">
+            <h5 class="fw-bold mb-3 d-flex align-items-center">
+                <i class="bi bi-bell-fill text-warning me-2"></i>
+                Deadline & Keep-Up Reminders
+            </h5>
+            {% if reminders %}
+                <div class="list-group list-group-flush">
+                    {% for reminder in reminders %}
+                        <div class="list-group-item bg-transparent px-0 border-bottom border-light">
+                            <div class="d-flex align-items-start">
+                                {% if reminder.type == 'deadline' %}
+                                    <span class="badge bg-danger-subtle text-danger p-2 me-3 rounded-3">
+                                        <i class="bi bi-calendar-event fs-6"></i>
+                                    </span>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">{{ reminder.title }}</h6>
+                                        <p class="mb-0 text-muted small mt-0.5">Deadline approaching: <span class="fw-semibold text-danger">{{ reminder.date }}</span> ({{ reminder.days_left }} days left)</p>
+                                    </div>
+                                {% else %}
+                                    <span class="badge bg-warning-subtle text-warning p-2 me-3 rounded-3">
+                                        <i class="bi bi-journal-text fs-6"></i>
+                                    </span>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Missed Study Day</h6>
+                                        <p class="mb-0 text-muted small mt-0.5">{{ reminder.message }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-3 text-muted">
+                    <i class="bi bi-emoji-smile fs-2 text-success mb-2 d-block"></i>
+                    <span class="small">All set! No upcoming deadlines or missed logs.</span>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Right Column: Recommendations & Badges -->
+    <div class="col-xl-6 col-lg-12 mb-4">
+        
+        <!-- Personalized Recommendations -->
+        <div class="card-glass p-4 mb-4">
+            <h5 class="fw-bold mb-3 d-flex align-items-center">
+                <i class="bi bi-mortarboard-fill text-info me-2"></i>
+                Recommended Resources
+            </h5>
+            {% if recommendations %}
+                <div class="row row-cols-1 row-cols-md-2 g-3">
+                    {% for rec in recommendations %}
+                        <div class="col">
+                            <div class="card border border-light h-100 shadow-sm p-3 rounded-4 bg-white">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-primary-subtle text-primary">{{ rec.category }}</span>
+                                    <span class="badge bg-secondary-subtle text-secondary small">{{ rec.resource_type }}</span>
+                                </div>
+                                <h6 class="fw-bold text-dark text-truncate mb-2">{{ rec.title }}</h6>
+                                <a href="{{ rec.resource_link }}" target="_blank" rel="noopener" class="btn btn-outline-primary btn-sm mt-auto w-100 rounded-3">
+                                    <i class="bi bi-box-arrow-up-right me-1"></i> View Resource
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-4 bg-light rounded-4 border">
+                    <i class="bi bi-info-circle fs-3 text-muted mb-2 d-block"></i>
+                    <p class="mb-1 small text-muted fw-semibold">No personalized recommendations yet.</p>
+                    <p class="text-muted small mb-0">Specify interests in your profile or add goals to populate recommendations.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Badges Showcase -->
+        <div class="card-glass p-4">
+            <h5 class="fw-bold mb-3 d-flex align-items-center">
+                <i class="bi bi-award-fill text-primary me-2"></i>
+                Earned Badges
+            </h5>
+            
+            <div class="row row-cols-2 row-cols-md-3 g-3">
+                <!-- Badge 1: First Goal -->
+                <div class="col">
+                    <div class="badge-card {% if 'First Goal' in earned_badges %}earned{% else %}locked{% endif %}">
+                        <div class="badge-icon-wrapper {% if 'First Goal' in earned_badges %}badge-first-goal{% else %}badge-locked{% endif %}">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <span class="fw-bold text-sm" style="font-size: 0.85rem; display: block;">First Goal</span>
+                        <span class="text-muted" style="font-size: 0.7rem;">Create your first learning goal</span>
+                    </div>
+                </div>
+                <!-- Badge 2: 3 Day Streak -->
+                <div class="col">
+                    <div class="badge-card {% if '3 Day Streak' in earned_badges %}earned{% else %}locked{% endif %}">
+                        <div class="badge-icon-wrapper {% if '3 Day Streak' in earned_badges %}badge-3day{% else %}badge-locked{% endif %}">
+                            <i class="bi bi-lightning-fill"></i>
+                        </div>
+                        <span class="fw-bold text-sm" style="font-size: 0.85rem; display: block;">3 Day Streak</span>
+                        <span class="text-muted" style="font-size: 0.7rem;">Study 3 consecutive days</span>
+                    </div>
+                </div>
+                <!-- Badge 3: 7 Day Streak -->
+                <div class="col">
+                    <div class="badge-card {% if '7 Day Streak' in earned_badges %}earned{% else %}locked{% endif %}">
+                        <div class="badge-icon-wrapper {% if '7 Day Streak' in earned_badges %}badge-7day{% else %}badge-locked{% endif %}">
+                            <i class="bi bi-fire"></i>
+                        </div>
+                        <span class="fw-bold text-sm" style="font-size: 0.85rem; display: block;">7 Day Streak</span>
+                        <span class="text-muted" style="font-size: 0.7rem;">Study 7 consecutive days</span>
+                    </div>
+                </div>
+                <!-- Badge 4: 30 Day Streak -->
+                <div class="col">
+                    <div class="badge-card {% if '30 Day Streak' in earned_badges %}earned{% else %}locked{% endif %}">
+                        <div class="badge-icon-wrapper {% if '30 Day Streak' in earned_badges %}badge-30day{% else %}badge-locked{% endif %}">
+                            <i class="bi bi-trophy-fill"></i>
+                        </div>
+                        <span class="fw-bold text-sm" style="font-size: 0.85rem; display: block;">30 Day Streak</span>
+                        <span class="text-muted" style="font-size: 0.7rem;">Study 30 consecutive days</span>
+                    </div>
+                </div>
+                <!-- Badge 5: Goal Master -->
+                <div class="col">
+                    <div class="badge-card {% if 'Goal Master' in earned_badges %}earned{% else %}locked{% endif %}">
+                        <div class="badge-icon-wrapper {% if 'Goal Master' in earned_badges %}badge-master{% else %}badge-locked{% endif %}">
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                        <span class="fw-bold text-sm" style="font-size: 0.85rem; display: block;">Goal Master</span>
+                        <span class="text-muted" style="font-size: 0.7rem;">Complete 5 learning goals</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 3. Bottom Row: Recent Study History -->
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card-glass p-4">
+            <h5 class="fw-bold mb-3 d-flex align-items-center">
+                <i class="bi bi-activity text-secondary me-2"></i>
+                Recent Study History
+            </h5>
+            
+            {% if logs %}
+                <div class="table-responsive table-responsive-custom">
+                    <table class="table table-hover table-custom align-middle bg-white">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Goal</th>
+                                <th>Hours</th>
+                                <th>Topic covered</th>
+                                <th>Insights / Study notes</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                                <tr>
+                                    <td class="fw-semibold text-muted font-monospace" style="font-size: 0.9rem;">
+                                        {{ log.study_date.strftime('%Y-%m-%d') if log.study_date is not string else log.study_date }}
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-dark">{{ log.goal_title }}</span>
+                                        <span class="badge bg-primary-subtle text-primary ms-2">{{ log.goal_category }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary-subtle text-dark fw-bold px-2.5 py-1.5">{{ log.hours }} hrs</span>
+                                    </td>
+                                    <td>
+                                        <code class="text-dark bg-light px-2 py-1 rounded" style="font-size: 0.85rem;">{{ log.topic }}</code>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted text-sm d-inline-block text-truncate" style="max-width: 250px;" title="{{ log.notes }}">
+                                            {{ log.notes or '-' }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{{ url_for('edit_log', log_id=log.id) }}" class="btn btn-outline-secondary btn-sm border-0 me-1">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                        <form action="{{ url_for('delete_log', log_id=log.id) }}" method="POST" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                            <button type="submit" class="btn btn-outline-danger btn-sm border-0 confirm-delete" data-item-name="this study log">
+                                                <i class="bi bi-trash3-fill"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4 bg-light rounded-4 text-muted">
+                    <i class="bi bi-clipboard2-x fs-1 mb-2 d-block"></i>
+                    <span>No study hours logged yet. Start logging above to record your history!</span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

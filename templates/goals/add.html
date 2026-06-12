@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+
+{% block title %}Add Goal - LearnTrack{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mb-4 mt-2">
+    <div class="col-lg-6 col-md-8 col-12">
+        <div class="card-glass p-4 shadow-sm">
+            <div class="mb-4">
+                <a href="{{ url_for('goals_list') }}" class="text-decoration-none text-muted small">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Goals
+                </a>
+                <h3 class="fw-bold mt-2 mb-1">Create Learning Goal</h3>
+                <p class="text-muted">Set a target to keep your learning path organized.</p>
+            </div>
+
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    {{ form.title.label(class="form-label fw-semibold") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control is-invalid", placeholder="e.g. Master React Basics") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.title(class="form-control", placeholder="e.g. Master React Basics") }}
+                    {% endif %}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.category.label(class="form-label fw-semibold") }}
+                        {% if form.category.errors %}
+                            {{ form.category(class="form-control is-invalid", placeholder="e.g. Web Development, Math") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.category.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.category(class="form-control", placeholder="e.g. Web Development, Math") }}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.target_date.label(class="form-label fw-semibold") }}
+                        {% if form.target_date.errors %}
+                            {{ form.target_date(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.target_date.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.target_date(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    {{ form.description.label(class="form-label fw-semibold") }}
+                    {% if form.description.errors %}
+                        {{ form.description(class="form-control is-invalid", rows="4", placeholder="Explain what concepts you will cover, resources you will use...") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.description.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.description(class="form-control", rows="4", placeholder="Explain what concepts you will cover, resources you will use...") }}
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    {{ form.status.label(class="form-label fw-semibold") }}
+                    {% if form.status.errors %}
+                        {{ form.status(class="form-select is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.status.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.status(class="form-select") }}
+                    {% endif %}
+                </div>
+
+                <div class="d-grid mt-2">
+                    {{ form.submit(class="btn btn-primary-custom py-2.5") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

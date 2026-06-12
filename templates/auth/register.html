@@ -1,0 +1,131 @@
+{% extends 'layout.html' %}
+
+{% block title %}Register - LearnTrack{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper py-5">
+    <div class="auth-card">
+        <div class="text-center mb-4">
+            <i class="bi bi-journal-bookmark-fill text-primary display-4 mb-2"></i>
+            <h2 class="fw-bold mb-1 font-monospace">LearnTrack</h2>
+            <p class="text-muted">Create your account to start tracking progress</p>
+        </div>
+
+        {% include 'includes/_messages.html' %}
+
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {% if form.username.errors %}
+                    {{ form.username(class="form-control is-invalid", placeholder="Choose a username") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.username.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.username(class="form-control", placeholder="Choose a username") }}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {% if form.email.errors %}
+                    {{ form.email(class="form-control is-invalid", placeholder="Enter your email") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.email.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.email(class="form-control", placeholder="Enter your email") }}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.learning_style.label(class="form-label") }}
+                {% if form.learning_style.errors %}
+                    {{ form.learning_style(class="form-select is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.learning_style.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.learning_style(class="form-select") }}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.interests.label(class="form-label") }}
+                {% if form.interests.errors %}
+                    {{ form.interests(class="form-control is-invalid", rows="2", placeholder="e.g. Python, SQL, Web Design, Data Science") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.interests.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.interests(class="form-control", rows="2", placeholder="e.g. Python, SQL, Web Design, Data Science") }}
+                {% endif %}
+                <small class="form-text text-muted" style="font-size: 0.75rem;">Comma-separated keywords used for personalized resource suggestions.</small>
+            </div>
+
+            <div class="mb-3">
+                {{ form.profile_image.label(class="form-label") }}
+                {% if form.profile_image.errors %}
+                    {{ form.profile_image(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.profile_image.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.profile_image(class="form-control") }}
+                {% endif %}
+                <small class="form-text text-muted" style="font-size: 0.75rem;">Formats allowed: JPG, JPEG, PNG, GIF. Max size: 2MB.</small>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.password.label(class="form-label") }}
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control is-invalid", placeholder="Password") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(class="form-control", placeholder="Password") }}
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.confirm_password.label(class="form-label") }}
+                    {% if form.confirm_password.errors %}
+                        {{ form.confirm_password(class="form-control is-invalid", placeholder="Confirm") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.confirm_password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.confirm_password(class="form-control", placeholder="Confirm") }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-grid mb-3 mt-2">
+                {{ form.submit(class="btn btn-primary-custom py-2.5 fs-6") }}
+            </div>
+
+            <div class="text-center mt-3">
+                <span class="text-muted text-sm">Already registered? </span>
+                <a href="{{ url_for('login') }}" class="text-primary-light fw-medium text-decoration-none">Sign In</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
