@@ -15,6 +15,12 @@
     <!-- Custom Premium CSS -->
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
     
+    <!-- Theme Initializer to prevent light flash -->
+    <script>
+        const storedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', storedTheme);
+    </script>
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>

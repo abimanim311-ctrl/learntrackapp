@@ -11,6 +11,7 @@
     --danger-color: #ef4444;
     --bg-dark: #0f172a;
     --bg-light: #f8fafc;
+    --bg-content: #f1f5f9;
     --card-bg-light: rgba(255, 255, 255, 0.85);
     --card-bg-dark: rgba(30, 41, 59, 0.7);
     --sidebar-bg: #1e293b;
@@ -112,7 +113,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0;
     min-height: 100vh;
     transition: all var(--transition-speed);
-    background-color: #f1f5f9;
+    background-color: var(--bg-content);
 }
 
 /* Top Glass Navbar */
@@ -309,18 +310,51 @@ h1, h2, h3, h4, h5, h6 {
     color: #f8fafc;
 }
 
-.auth-card .form-control {
-    background-color: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: white;
+.auth-card .form-control,
+.auth-card select.form-select,
+.auth-card input,
+.auth-card select,
+.auth-card textarea {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #cbd5e1 !important; /* light gray text color inside input box */
     border-radius: 10px;
     padding: 12px 16px;
 }
 
-.auth-card .form-control:focus {
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25);
-    background-color: rgba(15, 23, 42, 0.8);
+.auth-card .form-control::placeholder,
+.auth-card input::placeholder,
+.auth-card textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+.auth-card .form-control:focus,
+.auth-card select.form-select:focus,
+.auth-card input:focus,
+.auth-card select:focus,
+.auth-card textarea:focus {
+    border-color: var(--primary-light) !important;
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25) !important;
+    background-color: rgba(15, 23, 42, 0.8) !important;
+    color: #ffffff !important;
+}
+
+/* Force Light Gray Text on Browser Autofill */
+.auth-card .form-control:-webkit-autofill,
+.auth-card .form-control:-webkit-autofill:hover, 
+.auth-card .form-control:-webkit-autofill:focus,
+.auth-card input:-webkit-autofill,
+.auth-card input:-webkit-autofill:hover,
+.auth-card input:-webkit-autofill:focus,
+.auth-card textarea:-webkit-autofill,
+.auth-card textarea:-webkit-autofill:hover,
+.auth-card textarea:-webkit-autofill:focus,
+.auth-card select:-webkit-autofill,
+.auth-card select:-webkit-autofill:hover,
+.auth-card select:-webkit-autofill:focus {
+    -webkit-text-fill-color: #cbd5e1 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 .auth-card .form-label {
@@ -328,17 +362,9 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 500;
 }
 
-.auth-card select.form-select {
-    background-color: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: white;
-    border-radius: 10px;
-    padding: 12px 16px;
-}
-
 .auth-card select.form-select option {
     background-color: #1e293b;
-    color: white;
+    color: #cbd5e1;
 }
 
 /* User Profile Image Header */
@@ -411,4 +437,156 @@ h1, h2, h3, h4, h5, h6 {
     .navbar-brand-mobile {
         display: block;
     }
+}
+
+/* ==========================================
+   Premium Dark / Night Mode Styles
+   ========================================== */
+[data-theme="dark"] {
+    --bg-light: #0f172a;
+    --bg-content: #0b1120;
+    --card-bg-light: rgba(30, 41, 59, 0.7);
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+}
+
+[data-theme="dark"] #content {
+    background-color: var(--bg-content);
+}
+
+[data-theme="dark"] .navbar-custom {
+    background-color: rgba(15, 23, 42, 0.8) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .card-glass {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .badge-card {
+    background-color: rgba(30, 41, 59, 0.5);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .badge-card.earned {
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(79, 70, 229, 0.15) 100%);
+    border-color: rgba(79, 70, 229, 0.4);
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .badge-card.locked {
+    background-color: rgba(15, 23, 42, 0.4);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .badge-card h6,
+[data-theme="dark"] .badge-card p {
+    color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .streak-container {
+    background: linear-gradient(135deg, #4c0519, #881337);
+    border-color: #f43f5e;
+    color: #fecdd3;
+}
+
+[data-theme="dark"] .table-custom th {
+    background-color: #1e293b;
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .table {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .table-striped>tbody>tr:nth-of-type(odd)>* {
+    --bs-table-color-type: #f1f5f9;
+    --bs-table-bg-type: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    background-color: rgba(15, 23, 42, 0.8);
+    border-color: var(--primary-light);
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .form-label {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .form-text.text-muted {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] select.form-select option {
+    background-color: #1e293b;
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .dropdown-menu {
+    background-color: #1e293b;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .dropdown-item {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+}
+
+[data-theme="dark"] .bg-secondary-subtle {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .text-dark {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .modal-content {
+    background-color: #1e293b;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Force Dark Mode Autofill */
+[data-theme="dark"] .form-control:-webkit-autofill,
+[data-theme="dark"] .form-control:-webkit-autofill:hover, 
+[data-theme="dark"] .form-control:-webkit-autofill:focus,
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] textarea:-webkit-autofill,
+[data-theme="dark"] textarea:-webkit-autofill:hover,
+[data-theme="dark"] textarea:-webkit-autofill:focus,
+[data-theme="dark"] select:-webkit-autofill,
+[data-theme="dark"] select:-webkit-autofill:hover,
+[data-theme="dark"] select:-webkit-autofill:focus {
+    -webkit-text-fill-color: #cbd5e1 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #1e293b inset !important;
 }

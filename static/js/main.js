@@ -51,4 +51,22 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
+
+    // 5. Dark Mode / Night Mode Toggle
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    const currentTheme = localStorage.getItem("theme") || "light";
+
+    if (darkModeToggle) {
+        if (currentTheme === "dark") {
+            darkModeToggle.checked = true;
+        }
+        darkModeToggle.addEventListener("change", function () {
+            let theme = "light";
+            if (this.checked) {
+                theme = "dark";
+            }
+            document.documentElement.setAttribute("data-theme", theme);
+            localStorage.setItem("theme", theme);
+        });
+    }
 });
