@@ -1,6 +1,8 @@
+from flask.sansio import scaffold
 import os
 import datetime
 import time
+import ssl
 from flask import Flask, render_template, redirect, url_for, flash, request, current_app, abort
 from werkzeug.utils import secure_filename
 
@@ -29,7 +31,7 @@ from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 
-
+# Configuration is loaded from the Config class in config.py
 
 # Initialize Extensions
 mysql = MySQL(app)

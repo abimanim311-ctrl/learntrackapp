@@ -6,8 +6,7 @@ load_dotenv()
 
 class Config:
     """Base configuration class for LearnTrack."""
-    # Flask application secret key for session signing
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'learntrack-dev-secret-key-18239')
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'default-dev-secret-key-change-me')
     
     # Debug mode setting
     DEBUG = os.environ.get('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
@@ -15,9 +14,10 @@ class Config:
     # MySQL Configuration
     MYSQL_HOST = os.environ.get('MYSQL_HOST', 'localhost')
     MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
-    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', 'mysqlroot@123')
+    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '')
     MYSQL_DB = os.environ.get('MYSQL_DB', 'learntrack_db')
     MYSQL_PORT = int(os.environ.get('MYSQL_PORT', 3306))
+    MYSQL_SSL_CA = os.environ.get('MYSQL_SSL_CA')
     
     # Parse connection URL if available (common on Heroku, Railway, Render)
     db_url = os.environ.get('DATABASE_URL') or os.environ.get('MYSQL_URL') or os.environ.get('JAWSDB_URL') or os.environ.get('CLEARDB_DATABASE_URL')
@@ -28,7 +28,7 @@ class Config:
             clean_url = db_url
             if clean_url.startswith('mysql+pymysql://'):
                 clean_url = clean_url.replace('mysql+pymysql://', 'mysql://')
-                
+        
             url = urlparse(clean_url)
             MYSQL_HOST = url.hostname or MYSQL_HOST
             MYSQL_USER = unquote(url.username) if url.username else MYSQL_USER
