@@ -1,8 +1,5 @@
 -- LearnTrack Database Schema
 
-CREATE DATABASE IF NOT EXISTS learntrack_db;
-USE learntrack_db;
-
 -- 1. Users Table
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -60,7 +57,7 @@ CREATE TABLE IF NOT EXISTS recommendations (
     title VARCHAR(150) NOT NULL,
     resource_link VARCHAR(255) NOT NULL,
     category VARCHAR(50) NOT NULL,
-    resource_type VARCHAR(50) NOT NULL, -- 'Tutorial', 'Course', 'Documentation', 'Article'
+    resource_type VARCHAR(50) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

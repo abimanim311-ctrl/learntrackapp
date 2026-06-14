@@ -1,8 +1,6 @@
 -- LearnTrack Seed Data
 -- Default passwords are 'password123' (hashed using Bcrypt: $2b$12$R9h/lIPzNgbpcZG.Zg8A9uJgYc9o4f0gGkL1r3y/5e.QkP4F5iMye)
 
-USE learntrack_db;
-
 -- Clear tables (avoid duplication when re-running seed script)
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE badges;

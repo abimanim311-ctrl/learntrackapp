@@ -17,14 +17,18 @@ except ImportError:
 
 def check():
     print("Connecting to database...")
-    db = MySQLdb.connect(
-        host=Config.MYSQL_HOST,
-        user=Config.MYSQL_USER,
-        passwd=Config.MYSQL_PASSWORD,
-        db=Config.MYSQL_DB,
-        charset=getattr(Config, 'MYSQL_CHARSET', 'utf8mb4'),
-        cursorclass=DictCursor
-    )
+    connect_args = {
+        'host': Config.MYSQL_HOST,
+        'user': Config.MYSQL_USER,
+        'passwd': Config.MYSQL_PASSWORD,
+        'db': Config.MYSQL_DB,
+        'port': Config.MYSQL_PORT,
+        'charset': getattr(Config, 'MYSQL_CHARSET', 'utf8mb4'),
+        'cursorclass': DictCursor
+    }
+    if getattr(Config, 'MYSQL_SSL_CA', None):
+        connect_args['ssl'] = {'ca': Config.MYSQL_SSL_CA}
+    db = MySQLdb.connect(**connect_args)
     cur = db.cursor()
     
     # 1. Connection variables

@@ -12,13 +12,12 @@ class Config:
     DEBUG = os.environ.get('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
 
     # MySQL Configuration
-    MYSQL_HOST = os.environ.get('MYSQL_HOST', 'localhost')
+    MYSQL_HOST = os.environ.get('MYSQL_HOST', '')
     MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
     MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '')
     MYSQL_DB = os.environ.get('MYSQL_DB', 'learntrack_db')
     MYSQL_PORT = int(os.environ.get('MYSQL_PORT', 3306))
     MYSQL_SSL_CA = os.environ.get('MYSQL_SSL_CA')
-    
     # Parse connection URL if available (common on Heroku, Railway, Render)
     db_url = os.environ.get('DATABASE_URL') or os.environ.get('MYSQL_URL') or os.environ.get('JAWSDB_URL') or os.environ.get('CLEARDB_DATABASE_URL')
     if db_url and db_url.startswith('mysql'):
@@ -44,6 +43,13 @@ class Config:
     
     # Establish connection with UTF-8 Multibyte charset to support emojis
     MYSQL_CHARSET = 'utf8mb4'
+
+    # SSL connection fallback for cloud-hosted DBs
+    MYSQL_CUSTOM_OPTIONS = {}
+    if MYSQL_SSL_CA and os.path.exists(MYSQL_SSL_CA):
+        MYSQL_CUSTOM_OPTIONS = {"ssl": {"ca": MYSQL_SSL_CA}}
+    elif MYSQL_HOST and MYSQL_HOST not in ('localhost', '127.0.0.1', ''):
+        MYSQL_CUSTOM_OPTIONS = {"ssl": {}}
 
     
     # File Upload Settings
