@@ -12,11 +12,11 @@ class Config:
     DEBUG = os.environ.get('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
 
     # MySQL Configuration
-    MYSQL_HOST = os.environ.get('MYSQL_HOST', '')
-    MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
-    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '')
+    MYSQL_HOST = os.environ.get('MYSQL_HOST', 'learntrack-abimani27112003-3e8c.j.aivencloud.com')
+    MYSQL_USER = os.environ.get('MYSQL_USER', 'avnadmin')
+    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', 'AVNS_1XEbzIhtrDRF0MrIsq3')
     MYSQL_DB = os.environ.get('MYSQL_DB', 'learntrack_db')
-    MYSQL_PORT = int(os.environ.get('MYSQL_PORT', 3306))
+    MYSQL_PORT = int(os.environ.get('MYSQL_PORT', 23879))
     MYSQL_SSL_CA = os.environ.get('MYSQL_SSL_CA')
     # Parse connection URL if available (common on Heroku, Railway, Render)
     db_url = os.environ.get('DATABASE_URL') or os.environ.get('MYSQL_URL') or os.environ.get('JAWSDB_URL') or os.environ.get('CLEARDB_DATABASE_URL')
