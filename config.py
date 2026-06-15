@@ -1,60 +1,28 @@
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file if it exists
 load_dotenv()
 
 class Config:
-    """Base configuration class for LearnTrack."""
     SECRET_KEY = os.environ.get('SECRET_KEY', 'learntrack-dev-secret-key-18239')
-    
-    # Debug mode setting
     DEBUG = os.environ.get('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
 
-    # MySQL Configuration
+    # MySQL Configuration (individual vars only — no DATABASE_URL parsing)
     MYSQL_HOST = os.environ.get('MYSQL_HOST', 'learntrack-abimani27112003-3e8c.j.aivencloud.com')
     MYSQL_USER = os.environ.get('MYSQL_USER', 'avnadmin')
     MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', 'AVNS_1XEbzIhtrDRF0MrIsq3')
-    MYSQL_DB = os.environ.get('MYSQL_DB', 'learntrack_db')
-    MYSQL_PORT = int(os.environ.get('MYSQL_PORT', 23879))
-    MYSQL_SSL_CA = os.environ.get('MYSQL_SSL_CA')
-    MYSQL_SSL_MODE=os.environ.get('MYSQL_SSL_MODE','required')
-    # Parse connection URL if available (common on Heroku, Railway, Render)
-    db_url = os.environ.get('DATABASE_URL') or os.environ.get('MYSQL_URL') or os.environ.get('JAWSDB_URL') or os.environ.get('CLEARDB_DATABASE_URL')
-    if db_url and db_url.startswith('mysql'):
-        try:
-            from urllib.parse import urlparse, unquote
-            # Clean mysql+pymysql prefix if present
-            clean_url = db_url
-            if clean_url.startswith('mysql+pymysql://'):
-                clean_url = clean_url.replace('mysql+pymysql://', 'mysql://')
-        
-            url = urlparse(clean_url)
-            MYSQL_HOST = url.hostname or MYSQL_HOST
-            MYSQL_USER = unquote(url.username) if url.username else MYSQL_USER
-            MYSQL_PASSWORD = unquote(url.password) if url.password else MYSQL_PASSWORD
-            MYSQL_DB = url.path.lstrip('/') or MYSQL_DB
-            if url.port:
-                MYSQL_PORT = int(url.port)
-        except Exception as parse_err:
-            print(f"Error parsing database URL: {parse_err}")
-    
-    # Set cursor class to DictCursor to access query results by column names
+    MYSQL_DB = os.environ.get('MYSQL_DB', 'defaultdb')
+    MYSQL_PORT = 23879
     MYSQL_CURSORCLASS = 'DictCursor'
-    
-    # Establish connection with UTF-8 Multibyte charset to support emojis
     MYSQL_CHARSET = 'utf8mb4'
+    MYSQL_SSL_MODE = 'required'
 
-    # SSL connection fallback for cloud-hosted DBs
-    MYSQL_CUSTOM_OPTIONS = {}
-    if MYSQL_SSL_CA and os.path.exists(MYSQL_SSL_CA):
-        MYSQL_CUSTOM_OPTIONS = {"ssl": {"ca": MYSQL_SSL_CA ,"mode":MYSQL_SSL_MODE}}
-    elif MYSQL_HOST and MYSQL_HOST not in ('localhost', '127.0.0.1', ''):
-        MYSQL_CUSTOM_OPTIONS = {"ssl": {"mode":MYSQL_SSL_MODE}}
-    
+    # SSL for Aiven (always required)
+    MYSQL_CUSTOM_OPTIONS = {"ssl": {"mode": "required"}}
+
     # File Upload Settings
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', os.path.join(
         os.path.abspath(os.path.dirname(__file__)), 'static', 'uploads'
     ))
-    MAX_CONTENT_LENGTH = 2 * 1024 * 1024  # 2MB maximum file size
+    MAX_CONTENT_LENGTH = 2 * 1024 * 1024
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
