@@ -6,7 +6,7 @@ load_dotenv()
 
 class Config:
     """Base configuration class for LearnTrack."""
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'default-dev-secret-key-change-me')
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'learntrack-dev-secret-key-18239')
     
     # Debug mode setting
     DEBUG = os.environ.get('FLASK_DEBUG', 'True').lower() in ('true', '1', 't')
